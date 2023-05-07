@@ -1,6 +1,6 @@
 export const projectId = 'f33e1fd567267be6fedebb641ffb96f0'
-// export const apiURL = 'https://dexmaker-api.onrender.com/api/'
-export const apiURL = 'http://localhost:3245/api/'
+export const apiURL = 'https://dexmaker-api.onrender.com/api/'
+// export const apiURL = 'http://localhost:3245/api/'
 
 export const commands = {
     'erc20': 'create-erc20',
