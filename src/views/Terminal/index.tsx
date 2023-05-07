@@ -8,8 +8,12 @@ import {FooterComp} from "../../Footer";
 import {useHelp} from "../../hooks/useHelp";
 import {useCreateToken} from "../../hooks/useCreateToken";
 import {divideArgsToKeyValue} from "../../utils/formatArgs";
-import FlickerText from "../../components/Flicker";
+// import FlickerText from "../../components/Flicker";
 import {formatLine} from "../../utils/formatLine";
+import ReactMarkdown from "react-markdown";
+import {CodeBlock} from "../../components/OutputModified/CodeBlock";
+import {Header} from "../../components/Header";
+import {useCreateDex} from "../../hooks/useCreateDex";
 
 interface TerminalProps {}
 
@@ -101,7 +105,23 @@ const PreviousCommandsContainer = styled.div`
 function Output(props: OutputProps) {
 
     return <OutputContainer>
-        { props.isCode && <FlickerText output={props.output} /> }
+        { props.isCode && <ReactMarkdown children={props.output}
+            components={{
+                code({node, inline, className, children, ...props}) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return !inline && match ? (
+                        <CodeBlock
+                            language={match[1]}
+                            value={String(children).replace(/\n$/, '').replaceAll("`","")}
+                        />
+                    ) : (
+                        <code {...props} className={className}>
+                            {children}
+                        </code>
+                    )
+                }
+            }}
+        /> }
         {!props.isCode && ( props.output === "loading" ? <TerminalLoader /> : props.output.split('\n').map((line, i) => {
             return <div key={i} style={{marginBottom: '10px'}} >{formatLine(line)}</div>
         }))}
@@ -124,6 +144,7 @@ function Terminal(props: TerminalProps) {
     // command hooks
     const { helpCommand, advancedHelpCommand } = useHelp()
     const { createERC20 } = useCreateToken()
+    const { createV2Dex, createV3Dex } = useCreateDex()
 
     useEffect(() => {
         const handleFocus = () => {
@@ -155,6 +176,7 @@ function Terminal(props: TerminalProps) {
         // console.log("cmd", cmd, "args", args)
 
         let key = outputs.length;
+        let argv, outputContent:any;
         try {
 
             switch (cmd) {
@@ -164,7 +186,7 @@ function Terminal(props: TerminalProps) {
                         setOutputs(outputs => [...outputs.slice(0, key), {output: advancedHelpCommand}]);
                         setCurrentCommandExecuted(true)
                     } else {
-                        setOutputs(outputs => [...outputs.slice(0, key), {output: helpCommand, isCode: true}]);
+                        setOutputs(outputs => [...outputs.slice(0, key), {output: helpCommand, isCode: false}]);
                         setCurrentCommandExecuted(true)
                     }
                     break;
@@ -174,12 +196,28 @@ function Terminal(props: TerminalProps) {
                     setCurrentCommandExecuted(true)
                     break;
                 case "create-erc20":
-                    const argv = divideArgsToKeyValue(args)
-                    const outputContent = await createERC20({
+                    argv = divideArgsToKeyValue(args)
+                    outputContent = await createERC20({
                         name: argv.name,
                         symbol: argv.symbol,
                         decimals: Number(argv.decimals),
                         totalSupply: Number(argv.totalSupply)
+                    })
+                    setOutputs(outputs => [...outputs.slice(0, key), {output: outputContent, isCode: true}]);
+                    setCurrentCommandExecuted(true)
+                    break;
+                case "create-v2-dex":
+                    argv = divideArgsToKeyValue(args)
+                    outputContent = await createV2Dex({
+                        name: argv.name
+                    })
+                    setOutputs(outputs => [...outputs.slice(0, key), {output: outputContent, isCode: true}]);
+                    setCurrentCommandExecuted(true)
+                    break;
+                case "create-v3-dex":
+                    argv = divideArgsToKeyValue(args)
+                    outputContent = await createV3Dex({
+                        name: argv.name
                     })
                     setOutputs(outputs => [...outputs.slice(0, key), {output: outputContent, isCode: true}]);
                     setCurrentCommandExecuted(true)
@@ -196,7 +234,7 @@ function Terminal(props: TerminalProps) {
         }
         // setOutput(output + input + '\n');
         setInput('');
-    }, [input, outputs, advancedHelpCommand, helpCommand, createERC20]);
+    }, [input, outputs, advancedHelpCommand, helpCommand, createERC20, createV2Dex, createV3Dex]);
 
     useEffect(() => {
         window.scrollTo({
@@ -231,18 +269,9 @@ function Terminal(props: TerminalProps) {
             {/*<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: '#222', zIndex: 0 }}></div>*/}
             <FullPageContent>
                 <TerminalContainer>
-                    <pre style={{ textAlign: 'center', marginBottom: '0.5rem', whiteSpace: 'pre-wrap' }}>
-                        {figletText}
-                    </pre>
-                    <span style={{ textAlign: 'center', marginBottom: '0.5rem', whiteSpace: 'pre-wrap' }}>
-                        welcome to DexMaker v1.0, create and deploy your own decentralized exchange and any other smart contracts in minutes..
-                    </span>
-                    <span style={{ textAlign: 'center', marginBottom: '0.5rem', whiteSpace: 'pre-wrap' }}>
-                        and best of all, it's free! you just need to hold some <b style={{color: "red"}}>dxai</b> tokens according to your required commands.
-                    </span>
-                    <span style={{ textAlign: 'center', marginBottom: '0.5rem', whiteSpace: 'pre-wrap' }}>
-                        use this terminal to interact with the DexMaker CLI. type 'help' for a list of commands.
-                    </span>
+                    <Header figletText={figletText} callback={( command: string ) => {
+                        setInput(command)
+                    }} />
                     <hr style={{ color: '#fff', width: '100%', backgroundColor: '#fff', height: 1, border: 'none', marginBottom: '1rem' }} />
                     {
                         prompts.length > 0 && <PreviousCommandsContainer>

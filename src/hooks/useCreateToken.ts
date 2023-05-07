@@ -32,7 +32,7 @@ export const useCreateToken = () => {
             apiCallData.decimals = 18
         }
         if ( !totalSupply ) {
-            createError("totalSupply")
+            apiCallData.totalSupply = 21_000_000
         }
 
         const response = await fetchData({

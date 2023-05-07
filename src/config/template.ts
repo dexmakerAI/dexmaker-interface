@@ -18,12 +18,12 @@ connect-wallet-injected: Connects wallet to the CLI with injected provider.
 connect-wallet-wallet-connect: Connects wallet to the CLI with WalletConnect feature.
 
 [exchange commands]
-create-v2-exchange <name>: Creates a new v2 exchange with the specified name.
+create-v2-dex <name>: Creates a new v2 exchange with the specified name.
 
-create-v3-exchange <name>: Creates a new v3 exchange with the specified name.
+create-v3-dex <name>: Creates a new v3 exchange with the specified name.
 
 [token commands]
-create-erc20 <name> <symbol> <decimals>: Creates a new ERC20 token with the specified name, symbol and decimals.
+create-erc20 --name <name> --symbol <symbol> --totalSupply <totalSupply>: Creates a new ERC20 token with the specified name, symbol and decimals.
 
 [wallet commands]
 create-new-wallet: Creates a new wallet.
