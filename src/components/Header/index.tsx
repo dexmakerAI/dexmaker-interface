@@ -1,5 +1,4 @@
 import React from "react";
-import {Button} from "../Button";
 
 export const Header = ({figletText, callback}: {figletText: string, callback?: Function}) => {
     return (
@@ -16,12 +15,6 @@ export const Header = ({figletText, callback}: {figletText: string, callback?: F
             <span style={{textAlign: 'center', marginBottom: '0.5rem', whiteSpace: 'pre-wrap'}}>
                 use this terminal to interact with the DexMaker CLI. type 'help' for a list of commands.
             </span>
-
-            <div className={"head-buttons"}>
-                <Button label={"create erc20 token"} onClick={() => callback && callback('create-erc20 --name [enter-name] --symbol [enter-symbol] --totalSupply [enter-totalSupply]')} />
-                <Button label={"create v2 dex"} onClick={() => callback && callback('create-v2-dex --name [enter-name]')} />
-                <Button label={"create v3 dex"} onClick={() => callback && callback('create-v3-dex --name [enter-name]')} />
-            </div>
         </>
     )
 }

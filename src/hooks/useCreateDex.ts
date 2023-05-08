@@ -25,11 +25,13 @@ export const useCreateDex = () => {
     }, [])
 
 
-    const createV3Dex = useCallback(async({name}: {
+    const createStaticSwap = useCallback(async({name, totalTokens}: {
         name: string,
+        totalTokens: string
     }) => {
         let apiCallData = {
-            name
+            name,
+            totalTokens
         }
         if ( !name ) {
             createError("name")
@@ -37,7 +39,7 @@ export const useCreateDex = () => {
 
         const response = await fetchData({
             payload: apiCallData,
-            type: 'v3-dex'
+            type: 'static-swap'
         })
 
         return response.data
@@ -45,6 +47,6 @@ export const useCreateDex = () => {
 
     return {
         createV2Dex,
-        createV3Dex
+        createStaticSwap
     }
 }

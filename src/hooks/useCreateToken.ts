@@ -6,13 +6,14 @@ function createError(message: string) {
 }
 
 export const useCreateToken = () => {
-    const createERC20 = useCallback(async({name, symbol, decimals, totalSupply, isMintable=false, isProxy=false}: {
+    const createToken = useCallback(async({name, symbol, decimals, totalSupply, isMintable=false, isProxy=false, type="erc20"}: {
         name: string,
         symbol: string,
         decimals: number,
         totalSupply: number,
         isMintable?: boolean,
-        isProxy?: boolean
+        isProxy?: boolean,
+        type?: string
     }) => {
         let apiCallData = {
             name,
@@ -37,13 +38,13 @@ export const useCreateToken = () => {
 
         const response = await fetchData({
             payload: apiCallData,
-            type: 'erc20'
+            type
         })
 
         return response.data
     }, [])
 
     return {
-        createERC20
+        createToken
     }
 }

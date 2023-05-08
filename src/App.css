@@ -43,19 +43,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  position: static;
 }
 
 button {
   margin-right: 10px;
   border-radius: 15px;
   border: 1px solid #61dafb;
-  padding: 10px;
+  padding: 5px;
   background-color: #282c34;
   color: #61dafb;
-  font-size: 16px;
+  font-size: 10px;
   cursor: pointer;
+  margin-top: 1px;
   transition: all 0.3s ease-in-out;
 }
 
